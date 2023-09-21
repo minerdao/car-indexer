@@ -48,9 +48,9 @@ const writeBufferToFile = (buffer: Buffer, filePath: string): void => {
 };
 
 const folder = '/Users/max/data/datacap/1711/json'
-const carFile = `/Users/max/data/car/my.car`
 const [total, files] = await dirData(folder)
 const {cid, chunks} = await packCAR(files)
+const carFile = `/Users/max/data/car/my.car`
 console.log(`Total ${total} files, cid: ${cid}`);
 
 const concatenatedBuffer = Buffer.concat(chunks.map(array => Buffer.from(array)));

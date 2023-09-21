@@ -1,6 +1,6 @@
 import fs from 'fs'
 import path from 'path'
-import { CarReader } from '@ipld/car'
+import { CarIndexer, CarReader } from '@ipld/car'
 
 export interface FileEntity {
   pieceCID: string
@@ -30,24 +30,30 @@ export const getCarFiles = (dir: string): string[] => {
   return carFiles;
 };
 
-export async function extractCarFiles(carFiles: string[]): Promise<Array<FileEntity>> {
-  const results: Array<FileEntity> = [];
+const extractSingleFile = async (file: string): Promise<FileEntity> => {
+  console.log(`Extracting: ${file}`);
+  const pieceCID = path.basename(file, '.car')
+  const inStream = fs.createReadStream(file);
+  const stats = fs.statSync(file);
+  const reader = await CarReader.fromIterable(inStream);
+  const roots = await reader.getRoots();
+  const cid = roots[0].toString();
 
-  for (const file of carFiles) {
-    console.log(`Extracting: ${file}`);
-    const pieceCID = path.basename(file, '.car')
-    const inStream = fs.createReadStream(file);
-    const stats = fs.statSync(file);
-    const reader = await CarReader.fromIterable(inStream);
-    const roots = await reader.getRoots();
-    const cid = roots[0].toString();
+  return {
+    pieceCID,
+    fileSize: stats.size,
+    pieceSize: 34359738368,
+    dataCID: cid,
+  };
+}
 
-    results.push({
-      pieceCID,
-      fileSize: stats.size,
-      pieceSize: 34359738368,
-      dataCID: cid,
-    });
+export async function extractCarFiles(carFiles: string[], chunkSize = 20): Promise<Array<FileEntity>> {
+  const results: FileEntity[] = [];
+
+  for (let i = 0; i < carFiles.length; i += chunkSize) {
+    const currentChunk = carFiles.slice(i, i + chunkSize);
+    const chunkResults = await Promise.all(currentChunk.map(extractSingleFile));
+    results.push(...chunkResults);
   }
 
   return results;

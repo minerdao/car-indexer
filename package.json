@@ -9,7 +9,7 @@
     "tsup": "tsup",
     "build": "tsup",
     "index": "tsx src/index.ts",
-    "pack": "tsx src/pack.ts",
+    "package": "tsx src/package.ts",
     "lint": "eslint src",
     "lint:fix": "npm run lint --fix",
     "format": "prettier --write \"**/*.ts\"",
