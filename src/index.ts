@@ -47,7 +47,7 @@ const extractSingleFile = async (file: string): Promise<FileEntity> => {
   }
 }
 
-export async function extractCarFilesAndOutput(carFiles: string[], outputPath: string, chunkSize = 2): Promise<void> {
+export async function extractCarFilesAndOutput(carFiles: string[], outputPath: string, chunkSize = 10): Promise<void> {
   const writeStream = fs.createWriteStream(outputPath)
 
   for (let i = 0; i < carFiles.length; i += chunkSize) {
