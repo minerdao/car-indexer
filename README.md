@@ -3,5 +3,5 @@
 ## Usage
 ```sh
 $ yarn
-$ yarn index /path/car /path/output.csv
+$ yarn index /path/carpath /path/output.csv
 ```
