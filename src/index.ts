@@ -63,8 +63,16 @@ export async function writeDataToCSV(data: Array<FileEntity>, outputPath: string
   fs.writeFileSync(outputPath, csvContent);
 }
 
-const carPath = '/Users/max/data/car/'
-const outputFile = '/Users/max/data/output.csv'
+
+const args = process.argv.slice(2); // 前两个值是 node 的路径和脚本的路径
+
+if (args.length < 2) {
+  console.error('Please provide the carPath and outputFile as arguments.');
+  process.exit(1);
+}
+
+const carPath = path.resolve(args[0]);
+const outputFile = path.resolve(args[1]);
 const carFiles = getCarFiles(carPath); // Assuming getCarFiles is defined elsewhere in your code
 
 extractCarFiles(carFiles).then(data => {
